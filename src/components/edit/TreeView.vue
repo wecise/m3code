@@ -1,94 +1,113 @@
 <template>
     <el-container>
-        <el-header>
-            <el-input v-model="filterText" 
-                placeholder="搜索"
-                clearable></el-input>
+        <el-main style="padding:0px;">
+            <el-collapse value="1" class="edit-tree-collapse">
+                <el-collapse-item name="1">
+                    <span slot="title" style="width:90%;">
+                        <em class="el-icon-office-building"></em> m3code
+                        <span style="float:right;">
+                            <el-button type="text" icon="el-icon-folder-add" @click.stop="onNewDir"></el-button>
+                            <el-button type="text" icon="el-icon-document-add" @click.stop="onNewFile"></el-button>
+                        </span>
+                    </span>
+                    <div class="edit-tree-collapse-content">
+                        <div style="display:flex;">
+                            <el-input v-model="filterText" 
+                                placeholder="搜索"
+                                clearable>
+                            </el-input>
 
-                <el-dropdown placement="top-start" trigger="click">
-                    <el-tooltip content="导出、导入" >
-                        <el-button type="text" icon="el-icon-menu" style="color:#333333;padding-left: 10px;"></el-button>
-                    </el-tooltip>
-                    <el-dropdown-menu slot="dropdown">
-                        <div class="tool-box">
-                            <div class="tool">
-                                <div>导入</div>
-                                <p>
-                                    <label for="auto-file-upload">
-                                        <span class="el-icon-download" style="cursor:pointer;font-size:16px;padding:10px;"></span>
-                                    </label>
-                                    <input id="auto-file-upload" type="file" @change="onImport" required="required" style="display:none;" />
-                                </p>
-                            </div>
-                            <div class="tool" @click="onExport(null)">
-                                <div>导出</div>
-                                <p>
-                                    <el-button type="text">
-                                        <span class="el-icon-download" style="cursor:pointer;font-size:16px;"></span>
-                                    </el-button>
-                                </p>
-                            </div>
+                            <el-dropdown placement="top-start" trigger="click">
+                                <el-tooltip content="导出、导入" >
+                                    <el-button type="text" icon="el-icon-menu" style="color:#333333;padding-left: 10px;"></el-button>
+                                </el-tooltip>
+                                <el-dropdown-menu slot="dropdown">
+                                    <div class="tool-box">
+                                        <div class="tool">
+                                            <div>导入</div>
+                                            <p>
+                                                <label for="auto-file-upload">
+                                                    <span class="el-icon-download" style="cursor:pointer;font-size:16px;padding:10px;"></span>
+                                                </label>
+                                                <input id="auto-file-upload" type="file" @change="onImport" required="required" style="display:none;" />
+                                            </p>
+                                        </div>
+                                        <div class="tool" @click="onExport(null)">
+                                            <div>导出</div>
+                                            <p>
+                                                <el-button type="text">
+                                                    <span class="el-icon-download" style="cursor:pointer;font-size:16px;"></span>
+                                                </el-button>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </el-dropdown-menu>
+                            </el-dropdown>
                         </div>
-                    </el-dropdown-menu>
-                </el-dropdown>
-        </el-header>
-        <el-main>
-            <el-tree :data="treeData" 
-                    :props="defaultProps" 
-                    node-key="key"
-                    highlight-current
-                    accordion
-                    @node-click="onNodeClick"
-                    :filter-node-method="onNodeFilter"
-                    :expand-on-click-node="true"
-                    auto-expand-parent
-                    :default-expanded-keys="defaultExpandedKeys"
-                    style="background:transparent;"
-                    ref="tree">
-                <span slot-scope="{ node, data }" style="width:100%;height:30px;line-height: 30px;"  @mouseenter="onMouseEnter(data)" @mouseleave="onMouseLeave(data)">
-                    <span v-if="data.dir">
-                        <i class="el-icon-timer" style="color:#FFC107;" v-if="pickTypeFromLabel(node.label,'jobs')"></i>
-                        <i class="el-icon-bank-card" style="color:#FFC107;" v-else-if="pickTypeFromLabel(node.label,'rules')"></i>
-                        <i class="el-icon-s-platform" style="color:#FFC107;" v-else-if="pickTypeFromLabel(node.label,'hosts')"></i>
-                        <i class="el-icon-lock" style="color:#FFC107;" v-else-if="pickTypeFromLabel(node.label,'lock')"></i>
-                        <i class="el-icon-warning" style="color:#FFC107;" v-else-if="pickTypeFromLabel(node.label,'notify')"></i>
-                        <i class="el-icon-folder" style="color:#FFC107;" v-else></i>
-                        <span v-if="node.label==='/'"> 我的配置({{data.nodes.length}})</span>
-                        <span v-else> {{ pickLabel(node.label) }}({{data.nodes.length}})</span>
-                        <el-dropdown v-show="data.show" style="float:right;width:14px;margin:0 5px;">
-                            <span class="el-dropdown-link">
-                                <i class="el-icon-more el-icon--right"></i>
+                    </div>
+                    <el-tree :data="treeData" 
+                        :props="defaultProps" 
+                        node-key="key"
+                        highlight-current
+                        accordion
+                        @node-click="onNodeClick"
+                        :filter-node-method="onNodeFilter"
+                        :expand-on-click-node="true"
+                        auto-expand-parent
+                        :default-expanded-keys="defaultExpandedKeys"
+                        style="padding:10px;"
+                        ref="tree">
+                        <span slot-scope="{ node, data }" style="width:100%;height:30px;line-height: 30px;"  @mouseenter="onMouseEnter(data)" @mouseleave="onMouseLeave(data)">
+                            <span v-if="data.dir">
+                                <i class="el-icon-timer" style="color:#FFC107;" v-if="pickTypeFromLabel(node.label,'jobs')"></i>
+                                <i class="el-icon-bank-card" style="color:#FFC107;" v-else-if="pickTypeFromLabel(node.label,'rules')"></i>
+                                <i class="el-icon-s-platform" style="color:#FFC107;" v-else-if="pickTypeFromLabel(node.label,'hosts')"></i>
+                                <i class="el-icon-lock" style="color:#FFC107;" v-else-if="pickTypeFromLabel(node.label,'lock')"></i>
+                                <i class="el-icon-warning" style="color:#FFC107;" v-else-if="pickTypeFromLabel(node.label,'notify')"></i>
+                                <i class="el-icon-folder" style="color:#FFC107;" v-else></i>
+                                <span v-if="node.label==='/'"> 我的配置({{data.nodes.length}})</span>
+                                <span v-else> {{ pickLabel(node.label) }}({{data.nodes.length}})</span>
+                                <el-dropdown v-show="data.show" style="float:right;width:14px;margin:0 5px;">
+                                    <span class="el-dropdown-link">
+                                        <i class="el-icon-more el-icon--right"></i>
+                                    </span>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item @click.native="onRefresh(data)" icon="el-icon-refresh">刷新</el-dropdown-item>
+                                        <el-dropdown-item @click.native="onNewFile(data)" icon="el-icon-plus" divided>新建</el-dropdown-item>
+                                        <el-dropdown-item @click.native="onNewDir(data)" icon="el-icon-folder-add">新建目录</el-dropdown-item>
+                                        <el-dropdown-item @click.native="onEditFile(data)" icon="el-icon-edit-outline" divided>编辑</el-dropdown-item>
+                                        <el-dropdown-item @click.native="onExport(data)" icon="el-icon-download" divided>导出</el-dropdown-item>
+                                        <el-dropdown-item @click.native="onDelete(data)" icon="el-icon-delete" divided>删除</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
                             </span>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item @click.native="onRefresh(data)" icon="el-icon-refresh">刷新</el-dropdown-item>
-                                <el-dropdown-item @click.native="onNewFile(data)" icon="el-icon-plus" divided>新建</el-dropdown-item>
-                                <el-dropdown-item @click.native="onNewDir(data)" icon="el-icon-folder-add">新建目录</el-dropdown-item>
-                                <el-dropdown-item @click.native="onEditFile(data)" icon="el-icon-edit-outline" divided>编辑</el-dropdown-item>
-                                <el-dropdown-item @click.native="onExport(data)" icon="el-icon-download" divided>导出</el-dropdown-item>
-                                <el-dropdown-item @click.native="onDelete(data)" icon="el-icon-delete" divided>删除</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </el-dropdown>
-                    </span>
-                    <span v-else>
-                        <i class="el-icon-c-scale-to-original" style="color:#0088cc;"></i>
-                        <span draggable="true"  @dragstart="onDragStart(data,$event)" @dragend="onDragEnd($event)"> {{ pickLabel(node.label) }}</span>
-                        <el-dropdown v-show="data.show" style="float:right;width:14px;margin:0 5px;">
-                            <span class="el-dropdown-link">
-                                <i class="el-icon-more el-icon--right"></i>
+                            <span v-else>
+                                <i class="el-icon-c-scale-to-original" style="color:#0088cc;"></i>
+                                <span draggable="true"  @dragstart="onDragStart(data,$event)" @dragend="onDragEnd($event)"> {{ pickLabel(node.label) }}</span>
+                                <el-dropdown v-show="data.show" style="float:right;width:14px;margin:0 5px;">
+                                    <span class="el-dropdown-link">
+                                        <i class="el-icon-more el-icon--right"></i>
+                                    </span>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item @click.native="onEditFile(data)" icon="el-icon-edit-outline">编辑</el-dropdown-item>
+                                        <el-dropdown-item @click.native="onNewFile(data)" icon="el-icon-plus" divided>新建</el-dropdown-item>
+                                        <el-dropdown-item @click.native="onNewDir(data)" icon="el-icon-folder-add">新建目录</el-dropdown-item>
+                                        <el-dropdown-item @click.native="onDelete(data)" icon="el-icon-delete" divided>删除</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+                                <el-tooltip content="编辑" >
+                                    <el-button v-show="data.show" type="text" @click.stop="onEditFile(data)" icon="el-icon-edit-outline" style="float:right;width:14px;margin:0 5px;"></el-button>
+                                </el-tooltip>
                             </span>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item @click.native="onEditFile(data)" icon="el-icon-edit-outline">编辑</el-dropdown-item>
-                                <el-dropdown-item @click.native="onNewFile(data)" icon="el-icon-plus" divided>新建</el-dropdown-item>
-                                <el-dropdown-item @click.native="onNewDir(data)" icon="el-icon-folder-add">新建目录</el-dropdown-item>
-                                <el-dropdown-item @click.native="onDelete(data)" icon="el-icon-delete" divided>删除</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </el-dropdown>
-                        <el-tooltip content="编辑" >
-                            <el-button v-show="data.show" type="text" @click.stop="onEditFile(data)" icon="el-icon-edit-outline" style="float:right;width:14px;margin:0 5px;"></el-button>
-                        </el-tooltip>
+                        </span>  
+                    </el-tree>
+                </el-collapse-item>
+                <el-collapse-item name="2">
+                    <span slot="title">
+                        <em class="el-icon-document-copy"></em> 已打开
                     </span>
-                </span>  
-            </el-tree>
+                </el-collapse-item>
+            </el-collapse>
             <el-dialog :title="dialog.configNew.formItem.ifDir?'新增目录':'新增配置'" 
                 :visible.sync="dialog.configNew.show" 
                 v-if="dialog.configNew.show"
@@ -433,9 +452,7 @@ export default {
 }
 </script>
 <style scoped>
-    .el-container{
-        
-    }
+    
     .el-header{
         height:40px!important;
         line-height:40px;
@@ -468,10 +485,18 @@ export default {
 </style>
 
 <style>
-    .rule-messagebox.el-message-box{
-        width:40vw!important;
+    .edit-tree-collapse .el-collapse-item__header{
+        padding-left:10px;
+        height: 35px;
+        line-height: 35px;
+        font-size: 12px;
+        font-weight: normal;
     }
-    .rule-messagebox .el-message-box__message p {
-        line-height: 43px;
+    .edit-tree-collapse .el-collapse-item__header.is-active{
+        background-color: #f0f7ff;
+        font-weight: 600;
+    }
+    .edit-tree-collapse-content {
+        padding:10px;
     }
 </style>

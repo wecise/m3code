@@ -1,5 +1,5 @@
 <template>
-    <el-container style="background:#f2f2f2;">
+    <el-container>
         <el-main style="padding:1px;border-bottom:1px solid #f2f2f2;">
             <Split direction="horizontal" :gutterSize="5">
                 <SplitArea :size="control.configTree.show?25:0" :minSize="0" style="overflow:hidden;">
@@ -522,7 +522,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .el-container{
-      height: calc(100vh - 80px);
+      height: 100%;
+  }
+  .el-main{
+        height: 100%;
   }
   .el-footer{
       height:30px!important;

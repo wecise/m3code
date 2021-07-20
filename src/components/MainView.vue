@@ -1,11 +1,11 @@
 <template>
 
-  <RuleView style="height:calc(100vh - 50px);"></RuleView>
+  <EditView style="height:calc(100vh - 0px);"></EditView>
   
 </template>
 
 <script>
-import RuleView from './rule/RuleView';
+import EditView from './edit/EditView';
 
 
 export default {
@@ -14,7 +14,7 @@ export default {
     global: Object
   },
   components:{
-    RuleView
+    EditView
   }
 }
 </script>

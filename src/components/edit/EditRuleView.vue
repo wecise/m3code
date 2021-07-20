@@ -61,7 +61,7 @@ export default {
                     value: "chrome",
                     list: this.m3.EDITOR_THEME
                 },
-                height:'calc(100vh - 153px)'
+                height:'calc(100vh - 103px)'
             },
             ignore: false,
             changed: false,
@@ -159,7 +159,7 @@ export default {
             require(`brace/theme/${this.editor.theme.value}`); //language
         },
         onDragEnd(size){
-            let elHeight = parseInt(this.$el.offsetHeight * size[1]/100) + 140;
+            let elHeight = parseInt(this.$el.offsetHeight * size[1]/100) + 90;
             this.editor.height = `calc(100vh - ${elHeight}px)`;
         }
     }
