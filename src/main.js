@@ -35,7 +35,7 @@ let init = function(){
     window.global = m3.global;
 
     Vue.prototype.$ELEMENT = { 
-      size: 'small'
+      size: 'mini'
     };
 
     new Vue({
@@ -56,5 +56,7 @@ if(process.env.NODE_ENV === "development"){
   
 } else {
   m3.init();
-  init();
+  setTimeout(()=>{
+    init();
+  },1000)
 }

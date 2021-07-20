@@ -61,7 +61,7 @@ export default {
                     value: "chrome",
                     list: this.m3.EDITOR_THEME
                 },
-                height:'calc(100vh - 158px)'
+                height:'calc(100vh - 153px)'
             },
             ignore: false,
             changed: false,
@@ -98,6 +98,14 @@ export default {
         
         if(_.startsWith(this.model.key,"/matrix/jobs") || _.includes(this.model.key,"/jobs")){
             this.editor.lang.value = "toml";
+        }
+
+        if(_.includes(this.model.key,".json")){
+            this.editor.lang.value = "json";
+        }
+
+        if(_.includes(this.model.key,"/etc/")){
+            this.editor.lang.value = "ini";
         }
 
         try{
@@ -173,4 +181,5 @@ export default {
     .split{
         overflow-y: hidden!important;
     }
+
 </style>

@@ -180,7 +180,6 @@ export default {
     },
     methods:{
         onEditorInit(){
-            console.log(33,this.editor)
             require("brace/ext/language_tools"); //language extension prerequsite...
             require(`brace/mode/${this.editor.lang.value}`); //language
             require(`brace/snippets/${this.editor.lang.value}`); //snippet

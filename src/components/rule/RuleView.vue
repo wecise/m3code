@@ -1,13 +1,13 @@
 <template>
     <el-container style="background:#f2f2f2;">
-        <el-main style="padding:1px;border-bottom:1px solid #dddddd;">
+        <el-main style="padding:1px;border-bottom:1px solid #f2f2f2;">
             <Split direction="horizontal" :gutterSize="5">
                 <SplitArea :size="control.configTree.show?25:0" :minSize="0" style="overflow:hidden;">
                     <TreeView ref="treeView" @node-click="onTreeNodeClick" @node-open="onTreeNodeOpen" @node-close="(data)=>{ configClose(data) }"></TreeView>
                 </SplitArea>
                 <SplitArea :size="control.configTree.show?75:100" :minSize="0" style="overflow:hidden;">
                     <el-container>
-                        <el-header style="height: 35px;line-height: 35px;">
+                        <el-header :style="toolbarStyle">
                             
                             <!-- <el-tooltip content="切换视图">
                                 <el-button type="text" @click="onTogglePanel">
@@ -21,7 +21,7 @@
                                 </el-button>
                             </el-tooltip>
                             
-                            <el-tooltip content="选择主题">
+                            <el-tooltip content="选择主题" v-if="tabsStatus()">
                                 <el-dropdown style="padding-left:10px;float:right;">
                                     <span class="el-dropdown-link">
                                         <svg-icon icon-class="theme"/>
@@ -45,8 +45,8 @@
                                 </el-dropdown>
                             </el-tooltip>
                         </el-header>
-                        <el-main style="padding:0px;position: relative;overflow:hidden;">                            
-                            <el-tabs v-model="configTabs.activeIndex" type="border-card" closable @tab-remove="configClose" v-if="tabsStatus()">
+                        <el-main :style="mainStyle">                            
+                            <el-tabs v-model="configTabs.activeIndex" type="border-card" closable @tab-remove="configClose" v-if="tabsStatus()" class="rule-tabs">
                                 <el-tab-pane :key="item.name" :name="item.name" v-for="item in configTabs.tabs">
                                     <span slot="label" v-if="item.dir">
                                         <i class="el-icon-folder-opened" style="color:#ff0000;" v-if="tabPaneStatus(item.name)"></i>
@@ -96,13 +96,17 @@
         </el-main>
         <el-footer>
             时间：{{currentDateTime}}
-            <el-divider direction="vertical"></el-divider>
-            当前编辑：{{configTabs.activeIndex}}  
-            <el-divider direction="vertical"></el-divider>  
-            打开：{{configTabs.tabs.length}}
-            <span style="float:right;" v-if="configTabs.activeIndex">
-                <el-button type="text" icon="el-icon-tickets" @click="onToggleDegug(configTabs.activeIndex)"></el-button>
-            </span>
+            <template v-if="configTabs.activeIndex">
+                <el-divider direction="vertical"></el-divider>
+                当前编辑：{{configTabs.activeIndex}}  
+            </template>
+            <template v-if="configTabs.tabs.length > 0">
+                <el-divider direction="vertical"></el-divider>  
+                打开：{{configTabs.tabs.length}}
+                <span style="float:right;" v-if="configTabs.activeIndex">
+                    <el-button type="text" icon="el-icon-tickets" @click="onToggleDegug(configTabs.activeIndex)"></el-button>
+                </span>
+            </template>
         </el-footer>
     </el-container>
 </template>
@@ -152,6 +156,20 @@ export default {
     computed:{
         currentDateTime: function(){ 
             return this.moment().format(window.global.register.format);
+        },
+        toolbarStyle(){
+            if(_.isEmpty(this.configTabs.tabs)){
+                return `height: 35px;line-height: 35px;background:#ffffff;`;
+            } else {
+                return `height: 35px;line-height: 35px;background:#f2f2f2;border-bottom:1px solid #dddddd;`;
+            }
+        },
+        mainStyle(){
+            if(_.isEmpty(this.configTabs.tabs)){
+                return  `padding:0px;position: relative;overflow:hidden;`;
+            } else {
+                return  `padding:0px;position: relative;overflow:hidden;border-top:1px solid #ffffff;`;
+            }
         }
     },
     filters:{
@@ -506,17 +524,25 @@ export default {
   .el-container{
       height: calc(100vh - 80px);
   }
-
-
   .el-footer{
       height:30px!important;
       line-height: 30px;
-      border-top:1px solid #ffffff;
       color:#888888;
   }
 
-  .el-tabs--border-card {
+    .el-tabs--border-card {
         border: unset;
         box-shadow: unset;
+    }
+</style>
+
+<style>
+    .rule-tabs .el-tabs__item{
+        height: 35px;
+        line-height: 35px;
+    }
+    .rule-tabs.el-tabs--border-card>.el-tabs__header{
+        background-color: #f2f2f2!important;
+        border-bottom: 1px solid #f2f2f2!important;
     }
 </style>
