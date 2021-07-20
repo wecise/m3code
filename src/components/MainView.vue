@@ -1,11 +1,11 @@
 <template>
 
-  <EditView style="height:calc(100vh - 0px);"></EditView>
+  <FsView style="height:calc(100vh - 0px);"></FsView>
   
 </template>
 
 <script>
-import EditView from './edit/EditView';
+import FsView from './api/FsView';
 
 
 export default {
@@ -14,7 +14,7 @@ export default {
     global: Object
   },
   components:{
-    EditView
+    FsView
   }
 }
 </script>

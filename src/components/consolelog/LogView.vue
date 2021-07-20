@@ -155,16 +155,18 @@ export default {
                     window.intervalListener = setInterval(()=>{
                         this.onLoad();
                     },3000);
-                    this.$message({
-                        type: "info",
-                        message: "自动刷新开启"
-                    })
+                    
+                    // this.$message({
+                    //     type: "info",
+                    //     message: "自动刷新开启"
+                    // })
                 } else {
                     clearInterval(window.intervalListener);
-                    this.$message({
-                        type: "info",
-                        message: "自动刷新关闭"
-                    })
+                    
+                    // this.$message({
+                    //     type: "info",
+                    //     message: "自动刷新关闭"
+                    // })
                 }
             }
         },
@@ -214,7 +216,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
     .el-container{
-        margin: -15px!important;
+        
     }
     
 </style>
