@@ -1,83 +1,94 @@
 <template>
     <el-container>
-        <el-header v-if="currentTab">
+        <el-header>
             <!-- 工具栏 -->
-            <div>  
-                <span>
-                    <el-tooltip content="重打开" >
-                        <el-button type="text" icon="el-icon-refresh" @click="onReload"></el-button>
-                    </el-tooltip>    
+            <span>
+                <el-tooltip content="打开">
+                    <el-button type="text" icon="el-icon-folder-opened" @click="onOpen"></el-button>
+                </el-tooltip>
+                <el-divider direction="vertical"></el-divider>
+                <el-tooltip content="新建应用">
+                    <el-button type="text" icon="el-icon-folder-add" @click="onNewDir"></el-button>
+                </el-tooltip>
+                <el-tooltip content="新建文件">
+                    <el-button type="text" icon="el-icon-document-add" @click="onNewFile"></el-button>
+                </el-tooltip>    
+                <el-divider direction="vertical"></el-divider>
+                <el-tooltip content="重打开">
+                    <el-button type="text" icon="el-icon-refresh" @click="onReload"></el-button>
+                </el-tooltip>    
+            </span>
+            <span v-if="currentTab">
+                <el-divider direction="vertical"></el-divider>
+                <el-tooltip content="保存" >
+                    <el-button type="text" @click="onSave">
+                        <svg-icon icon-class="save"/>
+                    </el-button>
+                </el-tooltip>
+                <span  v-if="currentTab.data.ftype=='js'">
                     <el-divider direction="vertical"></el-divider>
-                    <el-tooltip content="保存" >
-                        <el-button type="text" @click="onSave">
-                            <svg-icon icon-class="save"/>
+                    <el-tooltip content="执行" >
+                        <el-button type="text" @click="onPlay" :loading="tip.loading">
+                            <svg-icon icon-class="play"/>
                         </el-button>
                     </el-tooltip>
-                    <span  v-if="currentTab.data.ftype=='js'">
-                        <el-divider direction="vertical"></el-divider>
-                        <el-tooltip content="执行" >
-                            <el-button type="text" @click="onPlay" :loading="tip.loading">
-                                <svg-icon icon-class="play"/>
-                            </el-button>
-                        </el-tooltip>
-                        <!-- <el-divider direction="vertical"></el-divider>
-                        <el-tooltip content="执行日志" >
-                            <el-button type="text" icon="el-icon-monitor" @click="onToggleRunningView('log')"></el-button>
-                        </el-tooltip>
-                        <el-tooltip content="执行结果" >
-                            <el-button type="text" icon="el-icon-tickets" @click="onToggleRunningView('result')"></el-button>
-                        </el-tooltip> -->
-                    </span>
-                    <span v-if="currentTab.data.ftype=='html' || currentTab.data.ftype=='js' || currentTab.data.ftype=='json'">
-                        <el-divider direction="vertical"></el-divider>
-                        <el-tooltip content="格式化" >
-                            <el-button type="text" icon="el-icon-finished" @click="onFormatContent"></el-button>
-                        </el-tooltip>
-                    </span>
-                    <span v-if="currentTab.data.ftype=='html'">
-                        <el-divider direction="vertical"></el-divider>
-                        <el-tooltip content="预览" >
-                            <el-button type="text" icon="el-icon-platform-eleme" @click="onToggleRunningView('preview')" ></el-button>
-                        </el-tooltip>
-                    </span>
-                     <el-tooltip content="选择主题">
-                        <el-dropdown style="padding-left:10px;float:right;">
-                            <span class="el-dropdown-link">
-                                <svg-icon icon-class="theme"/>
-                            </span>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item v-for="group in editor.theme.list" :key="group.name">
-                                    <el-dropdown @command="onToggleTheme">
-                                        <span class="el-dropdown-link">
-                                        {{ group.name }}
-                                        <i class="el-icon-arrow-down el-icon--right"></i>
-                                        </span>
-                                        <el-dropdown-menu slot="dropdown">
-                                            <el-dropdown-item
-                                                v-for="item in group.items"
-                                                :key="item.name"
-                                                :command="item.name">{{ item.name }}</el-dropdown-item>
-                                            </el-dropdown-menu>
-                                    </el-dropdown>
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
-                        </el-dropdown>
+                    <!-- <el-divider direction="vertical"></el-divider>
+                    <el-tooltip content="执行日志" >
+                        <el-button type="text" icon="el-icon-monitor" @click="onToggleRunningView('log')"></el-button>
                     </el-tooltip>
-                    <span style="padding-left:20px;font-size:12px;" v-if="tip.loading">{{tip.message}}</span>
+                    <el-tooltip content="执行结果" >
+                        <el-button type="text" icon="el-icon-tickets" @click="onToggleRunningView('result')"></el-button>
+                    </el-tooltip> -->
                 </span>
-                <span style="float:right;">
-                    <el-tooltip content="全屏" >
-                        <el-button type="text" @click="onToggleFullScreen" >
-                            <svg-icon icon-class="fullscreen"/>
-                        </el-button>
+                <span v-if="currentTab.data.ftype=='html' || currentTab.data.ftype=='js' || currentTab.data.ftype=='json'">
+                    <el-divider direction="vertical"></el-divider>
+                    <el-tooltip content="格式化" >
+                        <el-button type="text" icon="el-icon-finished" @click="onFormatContent"></el-button>
                     </el-tooltip>
                 </span>
-            </div>
+                <span v-if="currentTab.data.ftype=='html'">
+                    <el-divider direction="vertical"></el-divider>
+                    <el-tooltip content="预览" >
+                        <el-button type="text" icon="el-icon-platform-eleme" @click="onToggleRunningView('preview')" ></el-button>
+                    </el-tooltip>
+                </span>
+                    <el-tooltip content="选择主题">
+                    <el-dropdown style="padding-left:10px;float:right;">
+                        <span class="el-dropdown-link">
+                            <svg-icon icon-class="theme"/>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item v-for="group in editor.theme.list" :key="group.name">
+                                <el-dropdown @command="onToggleTheme">
+                                    <span class="el-dropdown-link">
+                                    {{ group.name }}
+                                    <i class="el-icon-arrow-down el-icon--right"></i>
+                                    </span>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item
+                                            v-for="item in group.items"
+                                            :key="item.name"
+                                            :command="item.name">{{ item.name }}</el-dropdown-item>
+                                        </el-dropdown-menu>
+                                </el-dropdown>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </el-tooltip>
+                <span style="padding-left:20px;font-size:12px;" v-if="tip.loading">{{tip.message}}</span>
+            </span>
+            <span style="float:right;">
+                <el-tooltip content="全屏" >
+                    <el-button type="text" @click="onToggleFullScreen" >
+                        <svg-icon icon-class="fullscreen"/>
+                    </el-button>
+                </el-tooltip>
+            </span>
         </el-header>
         <el-main style="padding:0px;overflow:hidden;">
             <Split direction="horizontal">
                 <SplitArea :size="25" :minSize="0" style="overflow:hidden;">
-                    <FileTree @node-click="(data)=>{ onTabOpen(data); }"></FileTree>
+                    <FileTree @node-click="(data)=>{ onTabOpen(data); }" ref="fsTree"></FileTree>
                 </SplitArea>
                 <SplitArea :size="75" :minSize="0" style="overflow:hidden;background:#ffffff;">
                     <el-tabs v-model="tabs.activeIndex" type="border-card" 
@@ -179,8 +190,14 @@ export default {
         }
     },
     methods:{
+        onNewDir(){
+            this.$refs.fsTree.onNewDir(null);
+        },
+        onNewFile(){
+            this.$refs.fsTree.onNewFile(null);
+        },
         onReload(){
-
+            this.$refs.fsTree.initData();
         },
         onTabOpen(data){
             
@@ -298,7 +315,6 @@ export default {
             let ftype = fs.data.ftype;
             let formatted = "";
             
-            console.log(this.m3)
             if(ftype==='html'){
                 formatted = this.m3.htmlFormat(content, 4, ' ', 200);
             } else if(ftype==='js'){
@@ -332,8 +348,8 @@ export default {
     .el-header{
         background-color:#f2f2f2;
         border-bottom:1px solid #ddd;
-        height:40px!important;
-        line-height:40px;
+        height:35px!important;
+        line-height:35px;
         padding:0 10px;
     }
 

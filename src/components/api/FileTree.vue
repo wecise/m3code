@@ -164,19 +164,30 @@ export default {
             this.$set(item, 'show', false)
         },
         onRefresh(item){
-            this.m3.dfsList(item).then( (rtn)=>{
+            this.initData();
+            /* this.m3.dfsList(item).then( (rtn)=>{
                 this.$set(item, 'children', _.sortBy(rtn.message, ['fullname'],['asc']));
-            } );
+            } ); */
         },
-        onNewDir(item){
-            this.$prompt('请输入目录名称', '提示', {
+        onNewDir(data){
+            
+            let item = null;
+            
+            if(!data){
+                item = { fullname: this.root};
+            } else {
+                item = data;
+            }
+
+
+            this.$prompt('请输入应用名称', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消'
               }).then(({ value }) => {
                 if(_.isEmpty(value)){
                     this.$message({
                         type: 'warning',
-                        message: '请输入目录名称！'
+                        message: '请输入应用名称！'
                     });
                     return false;
                 }
@@ -186,7 +197,7 @@ export default {
                 if(item.id == -1){
                     parent = this.root;
                 }
-
+    
                 let param = {
                                 parent:parent, name: value,
                                 data:{content:null,ftype:'dir',attr:{remark: '', rate: 0}}
@@ -194,7 +205,7 @@ export default {
                 this.m3.dfsNew(param).then( (res)=>{
                     this.$message({
                         type: "success",
-                        message: "新建目录成功 " + res
+                        message: "新建应用成功 " + res
                     })
 
                     this.onRefresh(item);
@@ -202,14 +213,14 @@ export default {
                 }).catch(err=>{
                     this.$message({
                         type: "error",
-                        message: "新建目录失败，" + err.message
+                        message: "新建应用失败，" + err.message
                     })
                 });
                 
               }).catch(() => {
                 this.$message({
                   type: 'info',
-                  message: '取消新建目录操作'
+                  message: '取消新建应用操作'
                 });       
               });
             
@@ -274,9 +285,9 @@ export default {
                 this.m3.dfsDelete(param).then( res=>{
                     this.$message({
                             type: "success",
-                            message: "删除成功 " + res
+                            message: "删除成功 " + item.name
                     })
-                        
+                    
                     this.onRefresh(item);
                     
                 }).catch(err=>{
@@ -287,7 +298,10 @@ export default {
                 });
 
             }).catch(() => {
-                
+                this.$message({
+                    type: "info",
+                    message: "取消删除操作"
+                })
             });
         },
         onUpload(){
