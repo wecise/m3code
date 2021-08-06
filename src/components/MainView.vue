@@ -19,10 +19,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-  .gutter.gutter-horizontal {
-      background:#f2f2f2;
-}
 </style>

@@ -45,7 +45,7 @@
                     ref="tree">
                 <span slot-scope="{ node, data }" style="width:100%;height:30px;line-height: 30px;"  @mouseenter="onMouseEnter(data)" @mouseleave="onMouseLeave(data)">
                     <span v-if="data.ftype=='dir'">
-                        <i class="el-icon-folder" style="color:#FFC107;"></i> 
+                        <span class="el-icon-folder-opened" style="color:#FFC107;"></span> 
                         <span> {{node.label}}</span>
                         <el-dropdown v-show="data.show" style="float:right;width:14px;padding-right:10px;">
                             <span class="el-dropdown-link">
@@ -61,7 +61,7 @@
                         </el-dropdown>
                     </span>
                     <span v-else>
-                        <i class="el-icon-c-scale-to-original" style="color:#0088cc;"></i>
+                        <span class="el-icon-tickets" style="color:#0088cc;"></span>
                         <span> {{node.label}}</span>
                         <el-dropdown v-show="data.show" style="float:right;width:14px;padding-right:10px;">
                             <span class="el-dropdown-link">
@@ -106,11 +106,12 @@ import _ from 'lodash';
 export default {
     name: "FileView",
     props: {
+        dfsRoot: Object,
         model: Object
     },
     data(){
         return {
-            root: '/app/matrix',
+            root: '',
             defaultProps: {
                 children: 'children',
                 label: 'name'
@@ -134,6 +135,9 @@ export default {
                     }
                 }
             },
+            api:{
+                root: "/script/matrix"
+            },
             whiteList: ['diagnosis','contextmenu','severity','attachment','event_list.js','job','notify','policy','view']
         }
     },
@@ -144,16 +148,35 @@ export default {
             } else {
                 this.$refs.tree.filter(val);
             }
+        },
+        dfsRoot:{
+            handler(val){
+                this.root = val.fullname;
+                this.initData();
+            },
+            immediate: true
         }
-    },
-    created(){
-        this.initData();
     },
     methods: {
         initData(){
+            if(!this.dfsRoot) return false;
             let param = {parent: this.root, fullname: this.root };
             this.m3.dfsList(param).then( (rtn)=>{
-                this.treeData = [{ id:-1,fullname: this.root, parent: this.root, name:'我的应用',children: _.sortBy(rtn.message, ['fullname'],['asc']), ftype:'dir'}];
+                let nodes = rtn.message;
+                _.forEach(rtn.message,node=>{
+                    let p = {parent: this.api.root, fullname: [this.api.root,node.name].join("/") };
+                    /* this.m3.dfsList(p).then( sub=>{
+                        console.log(1,sub)
+                        nodes.push(_.extend(node, {api: sub.message}));
+                    }).catch(()=>{
+                        return;
+                    }) */
+                });
+                console.log(11,nodes)
+                this.treeData = [
+                    _.extend(this.dfsRoot, {children: _.sortBy(nodes, ['fullname'],['asc']), ftype:'dir'})
+                ];
+                
             } );
         },
         onMouseEnter(item){
@@ -165,9 +188,6 @@ export default {
         },
         onRefresh(item){
             this.initData();
-            /* this.m3.dfsList(item).then( (rtn)=>{
-                this.$set(item, 'children', _.sortBy(rtn.message, ['fullname'],['asc']));
-            } ); */
         },
         onNewDir(data){
             

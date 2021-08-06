@@ -3,6 +3,24 @@
     <h3>m3code</h3>
 </div>
 
+## Base setup
+> Create a env file by yourself
+```
+.env
+```
+
+> The contents of the env are as follows
+```
+VUE_APP_M3_APP="m3code"                 -- app name
+
+VUE_APP_M3_HOST="47.92.151.165:8080"    -- host
+
+VUE_APP_M3_COMPANY="wecise"             -- company
+
+VUE_APP_M3_USERNAME="admin"             -- username
+
+VUE_APP_M3_PASSWORD="********"          -- password
+```
 
 ## Project setup
 ```

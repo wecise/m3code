@@ -5,7 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "electron_dev": "electron electron.js"
   },
   "dependencies": {
     "@wecise/m3js": "^1.0.39",
@@ -25,11 +27,14 @@
     "animate.css": "^4.1.1",
     "axios": "^0.18.1",
     "babel-eslint": "^10.1.0",
+    "electron": "^13.1.8",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "qs": "^6.5.2",
     "svg-sprite-loader": "^6.0.9",
     "vue-cli-plugin-axios": "^0.0.4",
     "vue-cli-plugin-element": "^1.0.1",
+    "vue-electron": "^1.0.6",
     "vue-json-editor": "^1.4.3",
     "vue-template-compiler": "^2.6.11",
     "vue2-ace-editor": "^0.0.15",

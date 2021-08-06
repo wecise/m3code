@@ -78,6 +78,18 @@ export default {
         }
     },
     watch:{
+        'model':{
+            handler(val){
+                if(val){
+                    this.editor.lang.value = val.data.ftype;
+                    this.$nextTick(()=>{
+                        this.$refs.editorRef.editor.setValue(val.content);
+                    })
+                }
+            },
+            deep: true,
+            immediate:true
+        },
         'editor.theme.value'(val){
             require(`brace/theme/${val}`);
             this.editor.theme.value = val;

@@ -88,7 +88,7 @@
         <el-main style="padding:0px;overflow:hidden;">
             <Split direction="horizontal">
                 <SplitArea :size="25" :minSize="0" style="overflow:hidden;">
-                    <FileTree @node-click="(data)=>{ onTabOpen(data); }" ref="fsTree"></FileTree>
+                    <FileTree @node-click="(data)=>{ onTabOpen(data); }" :dfsRoot="openedDfsRoot" ref="fsTree"></FileTree>
                 </SplitArea>
                 <SplitArea :size="75" :minSize="0" style="overflow:hidden;background:#ffffff;">
                     <el-tabs v-model="tabs.activeIndex" type="border-card" 
@@ -97,7 +97,10 @@
                         v-if="currentTab"
                         class="fs-tabs">
                             <el-tab-pane :name="item.data.id" :key="index" v-for="(item,index) in tabs.list">
-                                <span slot="label">{{item.data.name}}</span>
+                                <span slot="label">
+                                    {{item.data.name}}
+                                    <span style="font-variant: petite-caps;color:#888;">{{ item.data.ftype }}</span>
+                                </span>
                                 <FsEditorView 
                                     :model="item" 
                                     :ref="'FsEditView-'+item.data.id" 
@@ -124,6 +127,18 @@
                 <el-button type="text" icon="el-icon-tickets" @click="onToggleDegug(currentTab.data.id)"></el-button>
             </span>
         </el-footer>
+        <el-dialog
+            title="打开"
+            :visible.sync="dialog.open.show"
+            width="45vw"
+            v-if="dialog.open.show">
+            <FileOpen :dfsRoot="dialog.open.dfsRoot" ref="fileOpen"></FileOpen>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialog.open.show = false">取 消</el-button>
+                <el-button type="primary" @click="onOpened">当前窗口打开</el-button>
+                <el-button type="primary" @click="onOpenedByNewWin">新窗口打开</el-button>
+            </span>
+        </el-dialog>
   </el-container>
 </template>
 
@@ -132,6 +147,7 @@ import _ from 'lodash';
 import FileTree from './FileTree';
 import Welcome from './Welcome';
 import FsEditorView from './FsEditorView';
+import FileOpen from './FileOpen';
 
 export default {
     name: "FsView",
@@ -141,10 +157,12 @@ export default {
     components:{
         FileTree,
         Welcome,
-        FsEditorView
+        FsEditorView,
+        FileOpen
     },
     data(){
         return {
+            openedDfsRoot: { fullname: "/app/matrix",parent: "/app/matrix",name:"matrix"},
             tabs: {
                 list: [],
                 activeIndex: null
@@ -170,7 +188,20 @@ export default {
                     value: "merbivore",
                     list: this.m3.EDITOR_THEME
                 }
+            },
+            dialog: {
+                open: {
+                    dfsRoot: "/app/matrix",
+                    show: false
+                }
             }
+        }
+    },
+    created(){
+        let qs = require('qs');
+        if(_.includes(window.location.href,"open")){
+            let preRoot = qs.parse(window.location.href.split('?')[1]).open;
+            _.extend(this.openedDfsRoot, {fullname: preRoot, parent: preRoot,name:preRoot});
         }
     },
     computed:{
@@ -190,6 +221,18 @@ export default {
         }
     },
     methods:{
+        onOpen(){
+            this.dialog.open.show = true;
+        },
+        onOpened(){
+            this.openedDfsRoot = this.$refs.fileOpen.selectedNode;
+            this.dialog.open.show = false;
+        },
+        onOpenedByNewWin(){
+            let param = encodeURIComponent(this.$refs.fileOpen.selectedNode.fullname);
+            let url = `${window.location.hash}?open=${ param }`;
+            window.open(url);
+        },
         onNewDir(){
             this.$refs.fsTree.onNewDir(null);
         },
@@ -322,7 +365,7 @@ export default {
             } else if(ftype==='json'){
                 formatted = JSON.stringify(JSON.parse(content),null,2);
             } else { 
-                return false;
+                return;
             }
 
             fs.content = formatted;
@@ -341,7 +384,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
     .el-container{
-        height: calc(100vh - 109px);
+        height: calc(100vh - 99px);
         background: #f2f2f2;
     }
 
@@ -376,5 +419,14 @@ export default {
 <style>
     .fs-tabs .el-tabs__content{
         padding: 0px!important;
+    }
+
+    .fs-tabs .el-tabs__item{
+        height:35px!important;
+        line-height:35px!important;
+    }
+
+    .fs-tabs.el-tabs--border-card>.el-tabs__header {
+        background-color: #f2f2f2!important;
     }
 </style>
